@@ -1,9 +1,20 @@
-/**
- * mock数据服务器模块，用于暴露mock接口，返回数据
- */
-import Mock from 'mockjs';
-import category from './category.json';
-import homeData from './homeData.json';
+import Mock from 'mockjs'
+import homeData from './homeData.json'
+import categoryData from './category.json'
+import categoryListData from './categoryList.json'
 
-Mock.mock('/home', {code: 0, data: homeData});
-Mock.mock('/categorylist', {code: 0, data: category});
+// 1. 定义 模拟数据 路由接口接口 - ajax("/mock/home")  会得到 {code:0, data: homeData}
+Mock.mock('/mock/home', {
+  code: 0,
+  data: homeData
+});
+
+Mock.mock( '/mock/category', {
+  code: 0,
+  data: categoryData
+});
+
+Mock.mock( '/mock/category/list', {
+  code: 0,
+  data: categoryListData
+});

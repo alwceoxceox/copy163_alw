@@ -15,34 +15,16 @@
             <i class="iconfont icon-jiantou"></i>
         </div>
       </div>
-      <div class="commodity">
-          <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
+      <div  v-if="homeData.flashSaleModule" >
+        <div class="commodity" v-for="(item, index) in homeData.flashSaleModule.itemList" :key="index">
+          <img :src="item.picUrl" :alt="item.itemId">
           <div class="price pad">
-              <span>¥233</span>
-              <span class="line">¥2331</span>
+              <span>¥{{item.activityPrice}}</span>
+              <span class="line">¥{{item.originPrice}}</span>
           </div>
+        </div>
       </div>
-      <div class="commodity">
-          <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-          <div class="price pad">
-              <span>¥233</span>
-              <span class="line">¥2331</span>
-          </div>
-      </div>
-      <div class="commodity">
-          <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-          <div class="price pad">
-              <span>¥233</span>
-              <span class="line">¥2331</span>
-          </div>
-      </div>
-      <div class="commodity">
-          <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-          <div class="price pad">
-              <span>¥233</span>
-              <span class="line">¥2331</span>
-          </div>
-      </div>
+      
     </li>
     <li class="indexCardL indexCard">
       <div class="private limit">
@@ -53,42 +35,35 @@
           <i class="iconfont icon-jiantou"></i>
         </div>
       </div>
-
-      <div class="commodity">
-          <img src="https://yanxuan-item.nosdn.127.net/6754e5a5ea2005b11849d42e7f27ce3d.png?imageView&quality=65&thumbnail=330x330" alt="">
+    <div v-if="homeData.newItemList">
+      <div class="commodity" v-for="(newItem, index) in homeData.newItemList" :key="index" v-if="index<6">
+          <img :src="newItem.listPicUrl" alt="新品">
           <div class="price pad">
-              17寸 纯PC“铝框”（非...
-              <span>¥233</span>
+              {{newItem.name.length>14?newItem.name.slice(0,14)+'...':newItem.name}}
+              <span>¥{{newItem.retailPrice}}</span>
           </div>
+          <p></p>
       </div>
-      <div class="commodity">
-        <img src="https://yanxuan-item.nosdn.127.net/6754e5a5ea2005b11849d42e7f27ce3d.png?imageView&quality=65&thumbnail=330x330" alt="">
-        <div class="price pad">
-            17寸 纯PC“铝框”（非...
-            <span>¥233</span>
-        </div>
-      </div>
-      <div class="commodity">
-        <img src="https://yanxuan-item.nosdn.127.net/6754e5a5ea2005b11849d42e7f27ce3d.png?imageView&quality=65&thumbnail=330x330" alt="">
-        <div class="price pad">
-            17寸 纯PC“铝框”（非...
-            <span>¥233</span>
-        </div>
-      </div>
-      <div class="commodity">
-        <img src="https://yanxuan-item.nosdn.127.net/6754e5a5ea2005b11849d42e7f27ce3d.png?imageView&quality=65&thumbnail=330x330" alt="">
-        <div class="price pad">
-            17寸 纯PC“铝框”（非...
-            <span>¥233</span>
-        </div>
-      </div>
+    </div>
+      
+    
 
     </li>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+import {mapState} from 'vuex'
   export default {
+    computed: {
+      ...mapState({
+        homeData:state=>state.home.homeData
+      })
+    
+    },
+    async mounted() {
+      await this.$store.dispatch('getHomeData')
+    },
   }
 </script>
 

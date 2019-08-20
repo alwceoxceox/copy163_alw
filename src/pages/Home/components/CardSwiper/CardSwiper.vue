@@ -2,77 +2,18 @@
   <div>
     <li class="indexCardL indexCard">
       <div class="private">私人订制</div>
-      <div class="swiper-container">
+      <div class="swiper-container" ref="private">
         <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <div class="commodity">
-              <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
+          <div class="swiper-slide" v-for="(personalShop, index) in personalShopArr" :key="index">
+            <div class="commodity" v-for="(good, index) in personalShop" :key="index">
+              <img :src="good.primaryPicUrl" :alt="good.name">
               <div class="price">
-                玩趣彩虹四季拖鞋
-                <span>¥233</span>
-              </div>
-            </div>
-            <div class="commodity">
-              <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-              <div class="price">
-                玩趣彩虹四季拖鞋
-                <span>¥233</span>
-              </div>
-            </div>
-            <div class="commodity">
-              <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-              <div class="price">
-                玩趣彩虹四季拖鞋
-                <span>¥233</span>
+                {{good.name}}
+                <span>￥{{good.retailPrice}}</span>
               </div>
             </div>
           </div> 
-          <div class="swiper-slide">
-            <div class="commodity">
-              <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-              <div class="price">
-                玩趣彩虹四季拖鞋
-                <span>¥233</span>
-              </div>
-            </div>
-            <div class="commodity">
-              <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-              <div class="price">
-                玩趣彩虹四季拖鞋
-                <span>¥233</span>
-              </div>
-            </div>
-            <div class="commodity">
-              <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-              <div class="price">
-                玩趣彩虹四季拖鞋
-                <span>¥233</span>
-              </div>
-            </div>
-          </div> 
-          <div class="swiper-slide">
-            <div class="commodity">
-              <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-              <div class="price">
-                玩趣彩虹四季拖鞋
-                <span>¥233</span>
-              </div>
-            </div>
-            <div class="commodity">
-              <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-              <div class="price">
-                玩趣彩虹四季拖鞋
-                <span>¥233</span>
-              </div>
-            </div>
-            <div class="commodity">
-              <img src="https://yanxuan-item.nosdn.127.net/e5474a8f4fd5748079e2ba2ead806b51.png?imageView&quality=65&thumbnail=330x330" alt="">
-              <div class="price">
-                玩趣彩虹四季拖鞋
-                <span>¥233</span>
-              </div>
-            </div>
-          </div> 
+         
         </div>
         <!-- 如果需要分页器 -->
         <div class="swiper-pagination"></div>
@@ -85,16 +26,62 @@
 
 <script type="text/ecmascript-6">
   import Swiper from 'swiper'
+  import chunk from 'lodash/chunk'
+  import {mapGetters,mapState} from 'vuex'
   export default {
+   
+    computed: {
+      // ...mapGetters({
+      //   getPersonalShop:'getPersonalShop'
+      // }),
+      ...mapState({
+        homeData:(state)=>state.home.homeData
+      }),
+      
+    //    personalShopArr () {
+    //     let arr3 = []
+    //     if(this.homeData.personalShop){
+    //       this.homeData.personalShop.reduce((arr, shop)=>{
+    //         arr.push(shop)
+    //         if(arr.length === 3){
+    //           arr3.push(arr)
+    //           arr = []
+    //         }
+    //         return arr
+    //       }, [])
+    //     }
+    //     return arr3
+    //   }
+    // },
+       personalShopArr () {
+        let arr3 = []
+        if(this.homeData.personalShop){
+          return chunk(this.homeData.personalShop,3)
+          
+        }
+        return arr3
+      }
+      
+    },
     mounted() {
-     new Swiper ('.swiper-container', {
-        loop: true, // 循环模式选项
+    this.$store.dispatch('getHomeData')
         
-        // 如果需要分页器
-        pagination: {
-          el: '.swiper-pagination',
-        },
-      })        
+    },
+    watch: {
+      personalShopArr(){
+        this.$nextTick(()=>{
+          new Swiper (this.$refs.private, {
+            loop: true, // 循环模式选项
+            
+            // 如果需要分页器
+            pagination: {
+              el: '.swiper-pagination',
+              clickable: true,
+            },
+          }) 
+        })
+      }
+          
     },
   }
 </script>

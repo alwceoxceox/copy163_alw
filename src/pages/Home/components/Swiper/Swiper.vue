@@ -1,6 +1,6 @@
 <template>
   <div class="indexCarousel">
-    <div class="swiper-container">
+    <div class="swiper-container" ref="swiper-container">
         <div class="swiper-wrapper">
             <img class="swiper-slide" 
             src="https://yanxuan.nosdn.127.net/41206124e95bb06e5493c20c55cf9e63.jpg?imageView&quality=75&thumbnail=750x0"></img>
@@ -21,7 +21,7 @@
   import Swiper from 'swiper'
   export default {
     mounted() {
-     new Swiper ('.swiper-container', {
+     new Swiper (this.$refs, {
         loop: true, // 循环模式选项
         
         // 如果需要分页器

@@ -1,42 +1,35 @@
 <template>
     <div class="IndexNecessity">
       <ul class="IndexNecessityList">
-        <li class="IndexNecessityItem">
-          <img src="https://yanxuan.nosdn.127.net/5243a7191dd4c86b3b28859089273aa8.gif" alt="新品首发">
-          <div>新品首发</div>
+        <li class="IndexNecessityItem" v-for="(necessity, index) in getKingKongList" :key="index">
+          <img :src="necessity.picUrl" alt="新品首发">
+          <div>{{necessity.text}}</div>
         </li>
-        <li class="IndexNecessityItem">
-          <img src="https://yanxuan.nosdn.127.net/5243a7191dd4c86b3b28859089273aa8.gif" alt="新品首发">
-          <div>新品首发</div>
-        </li>
-        <li class="IndexNecessityItem">
-          <img src="https://yanxuan.nosdn.127.net/5243a7191dd4c86b3b28859089273aa8.gif" alt="新品首发">
-          <div>新品首发</div>
-        </li>
-        <li class="IndexNecessityItem">
-          <img src="https://yanxuan.nosdn.127.net/5243a7191dd4c86b3b28859089273aa8.gif" alt="新品首发">
-          <div>新品首发</div>
-        </li>
-        <li class="IndexNecessityItem">
-          <img src="https://yanxuan.nosdn.127.net/5243a7191dd4c86b3b28859089273aa8.gif" alt="新品首发">
-          <div>新品首发</div>
-        </li>
-        <li class="IndexNecessityItem">
-          <img src="https://yanxuan.nosdn.127.net/5243a7191dd4c86b3b28859089273aa8.gif" alt="新品首发">
-          <div>新品首发</div>
-        </li>
+       
       </ul>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
+import {mapState,mapGetters} from 'vuex'
   export default {
+   
+    computed: {
+      ...mapGetters(['getKingKongList'])
+    
+   },
+   mounted() {
+     this.$store.dispatch('getHomeData')
+   },
+   
+
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .IndexNecessity
   width 100%
+  background-color white
   .IndexNecessityList
     width 100%
     display flex

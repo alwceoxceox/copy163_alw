@@ -44,7 +44,16 @@
 </template>
 
 <script type="text/ecmascript-6">
+import {mapState} from 'vuex'
   export default {
+    computed: {
+      ...mapState({
+        homeData:state=>state.home.homeData
+      })
+    },
+   async mounted() {
+      await this.$store.dispatch('getHomeData')
+    },
   }
 </script>
 

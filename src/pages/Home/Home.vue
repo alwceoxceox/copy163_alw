@@ -1,21 +1,13 @@
 <template>
   <div id="indexContainer">
-    <Header></Header><!--头部-->
+    <IndexHeader></IndexHeader><!--头部-->
     <div class="indexContainer">
         <Swiper></Swiper><!--轮播图部分-->
         <div class="quality">
-            <ul class="qualityList">
-                <li class="qualityItem">
+            <ul class="qualityList" >
+                <li class="qualityItem" v-for="(quality, index) in qualitys" :key="index">
                     <i class="iconfont icon-airudiantubiaohuizhi-zhuanqu_yiwutong"></i>
-                    <span>网易自营品牌</span>
-                </li>
-                <li class="qualityItem">
-                    <i class="iconfont icon-dunpai"></i>
-                    <span>网易自营品牌</span>
-                </li>
-                <li class="qualityItem">
-                    <i class="iconfont icon-zhifu"></i>
-                    <span>网易自营品牌</span>
+                    <span>{{quality.desc}}</span>
                 </li>
             </ul>
         </div>
@@ -51,6 +43,7 @@
 
 <script type="text/ecmascript-6">
   import Swiper from './components/Swiper/Swiper.vue'
+  import IndexHeader from './components/IndexHeader/IndexHeader.vue'
   import Nav from './components/Nav/Nav.vue'
   import Gift from './components/Gift/Gift.vue'
   import Advertisement from './components/Advertisement/Advertisement.vue'
@@ -62,14 +55,23 @@
   import Cate from './components/Cate/Cate.vue'
   import IndexFooter from './components/IndexFooter/IndexFooter.vue'
 
+
+  import { mapState,mapGetters } from 'vuex'
+
   export default {
-    data() {
-      return {
-      }
+     
+
+    computed: {
+      ...mapState({
+        qualitys: state => state.home.homeData.policyDescList
+      }),
     },
-   
+    mounted() {
+      this.$store.dispatch('getHomeData')
+    },
     components:{
       Swiper,
+      IndexHeader,
       Nav,
       Gift,
       Advertisement,
@@ -95,6 +97,7 @@
       padding-top 82px
       
       .quality
+        background-color #fff
         .qualityList
           display flex
           align-items center
