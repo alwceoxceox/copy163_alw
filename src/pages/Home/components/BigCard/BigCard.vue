@@ -133,37 +133,43 @@
           <i class="iconfont icon-jiantou"></i>
         </div>
       </div>
-      <div class="crowdfunding">
-        <img src="https://yanxuan.nosdn.127.net/721fd65889559e3ceff651c81c18685a.png?imageView&thumbnail=210x210&quality=75" alt="">
-        <div class="crowdfundingRight">
-          <div>来自地心的礼物</div>
-          <div>¥222</div>
-          <div>
-            <h4></h4>
-            <span>9%</span>
+        <div v-if="homeData.zhongChouList">
+          <div class="crowdfunding" v-for="(crowd, index) in homeData.zhongChouList" :key="index">
+            <img :src="crowd.picUrl" alt="">
+              <div class="crowdfundingRight">
+                <div>{{crowd.name}}</div>
+                <div>¥{{crowd.retailPrice}}</div>
+                <div>
+                    <h4>
+                      <h5 :style="{width:crowd.progress+'%'}">
+
+                      </h5>
+                    </h4>
+                    <span>{{crowd.progress}}%</span>
+                </div>
+              <div>{{crowd.supportNum}}</div>
           </div>
-          <div>6人已支持</div>
         </div>
       </div>
-      <div class="crowdfunding">
-        <img src="https://yanxuan.nosdn.127.net/721fd65889559e3ceff651c81c18685a.png?imageView&thumbnail=210x210&quality=75" alt="">
-        <div class="crowdfundingRight">
-            <div>来自地心的礼物</div>
-            <div>¥222</div>
-            <div>
-                <h4></h4>
-                <span>9%</span>
-            </div>
-            <div>6人已支持</div>
-        </div>
-      </div>
+     
+      
     </li>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import Choiceness from '../Choiceness/Choiceness.vue'
+  import {mapState} from 'vuex'
   export default {
+    computed: {
+      ...mapState({
+        homeData:state=>state.home.homeData
+      }),
+      
+    },
+    async mounted() {
+      await this.$store.dispatch('getHomeData')
+    },
     components:{
       Choiceness
     }
@@ -381,6 +387,15 @@
               font-size 14px
             &:nth-child(2)
               color #b4282d
+            &:nth-child(3)
+              h4
+                width 200px
+                height 3px
+                background-color #D8D8D8
+                overflow hidden
+                h5
+                  background-color #FEA438
+                  height 3px
             &:nth-child(4)
               font-size 10px
 </style>

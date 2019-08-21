@@ -5,6 +5,8 @@ import Vue from 'vue'
 import Vuex, {Store} from 'vuex'
 
 import home from './modules/home'
+import search from './modules/search'
+import classify from './modules/classify'
 
 import mutations from './mutations'
 import actions from './actions'
@@ -21,6 +23,8 @@ export default new Store({
   // 配置应用中所有的功能相关的配置
   modules: {
     home:home,
+    search:search,
+    classify:classify
    
   }
 })

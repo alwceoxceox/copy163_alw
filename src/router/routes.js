@@ -9,25 +9,40 @@ import Search from '../pages/Search/Search.vue'
 export default[
     {
     path:'/home',
-    component:Home
+    component:Home,
+    meta: {
+      showFooter: true
+    }
   },
     {
     path:'/classify',
-    component:Classify
+    component:Classify,
+    meta: {
+      showFooter: true
+    }
   },
   {
     path:'/photograph',
-    component:Photograph
+    component:Photograph,
+    meta: {
+      showFooter: true
+    }
   },
     
   {
     path:'/shoppingCart',
-    component:ShoppingCart
+    component:ShoppingCart,
+    meta: {
+      showFooter: true
+    }
   },
    
   {
     path:'/personage',
-    component:Personage
+    component:Personage,
+    meta: {
+      showFooter: true
+    }
   },
   {
     path:'/login',

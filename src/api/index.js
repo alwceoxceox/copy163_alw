@@ -17,6 +17,8 @@ export const reqSearchResult = (keywordPrefix) => ajax(`${prefix}/xhr/search/sea
 // 分类列表数据
 export const reqMockCategory = () => ajax('/mock/category');    // 请求mock数据
 
+export const reqMockCategoryList = () => ajax('/mock/category/list');    // 请求mock数据
+
 // 识物-Tab 懒数据 ---- http://m.you.163.com/topic/v1/find/getTabs.json
 export const reqTabs = () => ajax(`${prefix}/topic/v1/find/getTabs.json`)
 

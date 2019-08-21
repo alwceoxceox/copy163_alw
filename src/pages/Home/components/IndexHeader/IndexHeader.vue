@@ -1,11 +1,11 @@
 <template>
   <div>
-    <header class="indexHeader" @click="$router.replace('/search')">
+    <header class="indexHeader" >
       <div class="indexLine">
           <h1 class="logo">
               <a href="##"><img src="/static/imgs/logo.png" alt="logo"></a>
           </h1>
-          <div class="indexSearch">
+          <div class="indexSearch" @click="$router.push('/search')">
               <i class="iconfont icon-Search"></i>
               <input type="text" placeholder="搜索商品">
           </div>

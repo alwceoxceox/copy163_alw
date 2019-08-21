@@ -2,57 +2,79 @@
   <div>
     <div class="classifyContainer">
       <header id="classifyHeader">
-        <input type="text" placeholder="搜索商品, 共21508款好物" class="search">
+        <input type="text" placeholder="搜索商品, 共21508款好物" class="search" @click="$router.push('/search')">
         <i class="iconfont icon-Search"></i>
       </header>
       <div class="classifyContent">
-        <ul class="classifyNav">
-          <li class="classifyNavItem active">
-            推荐专区
-          </li>
-          <li class="classifyNavItem">夏凉专区</li>
-          <li class="classifyNavItem">夏凉专区</li>
-          <li class="classifyNavItem">推荐专区</li>
-          <li class="classifyNavItem">推荐专区</li>
-        </ul>
-        <div class="particulars">
-          <div class="banner">
-            <img src="https://yanxuan.nosdn.127.net/5b4ca33a0205482398006405c1db15e8.jpg?imageView&thumbnail=0x196" alt="">
-          </div>
-          <ul class="list">
-            <li class="item">
-              <div class="imgWrap">
-                <img src="https://yanxuan.nosdn.127.net/c117ea2f1c4d978eb1f310d6d9ec3226.png?imageView&quality=85&thumbnail=144x144" alt="">
-              </div>
-              <div class="imgName">优选美食2件85折</div>
-            </li>
-            <li class="item">
-              <div class="imgWrap">
-                <img src="https://yanxuan.nosdn.127.net/c117ea2f1c4d978eb1f310d6d9ec3226.png?imageView&quality=85&thumbnail=144x144" alt="">
-              </div>
-              <div class="imgName">员工精选好货</div>
-            </li>
-            <li class="item">
-              <div class="imgWrap">
-                <img src="https://yanxuan.nosdn.127.net/c117ea2f1c4d978eb1f310d6d9ec3226.png?imageView&quality=85&thumbnail=144x144" alt="">
-              </div>
-              <div class="imgName">员工精选好货</div>
-            </li>
-            <li class="item">
-              <div class="imgWrap">
-                <img src="https://yanxuan.nosdn.127.net/c117ea2f1c4d978eb1f310d6d9ec3226.png?imageView&quality=85&thumbnail=144x144" alt="">
-              </div>
-              <div class="imgName">员工精选好货</div>
+        <div ref="classifyNavWRap" class="classifyNavWRap">
+          <ul class="classifyNav">
+            <li class="classifyNavItem" :class="{active: currentIndex===index}" @click.stop="getActive(index)" v-for="(classifyNavItem, index) in categoryData.categoryL1List" :key="index">
+              {{classifyNavItem.name}}
             </li>
           </ul>
         </div>
+        
+        <div class="particularsWrap" ref="particularsWrap">
+            <div class="particulars" v-show="index===currentIndex" v-for="(item, index) in categoryData.categoryL1List" :key="index">
+            <div class="banner">
+              <img :src="item.bannerUrl" alt="">
+            </div>
+            <ul class="list">
+              <li class="item" v-for="(user, index) in item.subCateList" :key="index">
+                <div class="imgWrap">
+                  <img :src="user.bannerUrl" alt="">
+                </div>
+                <div class="imgName">{{user.frontName}}</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+
       </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import {mapState} from 'vuex'
+  import BScroll from 'better-scroll'
   export default {
+    data() {
+      return {
+        isShow:false,
+        currentIndex:0
+      }
+    },
+    methods: {
+      getActive(index){
+        this.currentIndex=index
+      }
+    },
+    computed: {
+      ...mapState({
+        categoryData:state=>state.classify.categoryData
+      })
+    },
+    async mounted() {
+      await this.$store.dispatch('getClassify')
+      this.$nextTick(
+        ()=>{
+            new BScroll(this.$refs.classifyNavWRap, {
+              click: true,
+              scrollY:true
+            })
+        }
+      )
+      this.$nextTick(
+        ()=>{
+            new BScroll(this.$refs.particularsWrap, {
+              click: true,
+              scrollY:true
+            })
+        }
+      )
+    },
   }
 </script>
 
@@ -61,7 +83,6 @@
     background-color white
     width 100%
     height 667px
-
     #classifyHeader
       width 100%
       height 45px
@@ -92,53 +113,59 @@
       color #333
       padding 0 5%
       box-sizing border-box
-      .classifyNav
-        width 20%
-        margin-top 5px
-        .classifyNavItem
-          width 100%
-          height 45px
-          line-height 45px
-          box-sizing border-box
-          &.active
-            position relative
-            color #ab2b2b
-            &::before
-              width 3px
-              content ""
-              height 50%
-              display inline-block
-              background-color #ab2b2b
-              position absolute
-              top 50%
-              transform translateY(-50%)
-              left -19px
-          &:nth-child(1)
-            margin-top -10px
-
-      .particulars
-        width 80%
-        box-sizing border-box
-        padding-left 10px
-        .banner
-          img
+      overflow: hidden;
+      .classifyNavWRap
+        margin-bottom 20px
+        .classifyNav
+          width 60px
+          margin-top 5px
+          .classifyNavItem
             width 100%
-        .list
-          width 100%
-          display flex
-          flex-wrap wrap
-          margin-top 10px
-          .item
-            margin-right 17px
+            height 45px
+            line-height 45px
             box-sizing border-box
-            font-size 12px
-            &:nth-child(3n)
-              margin-right  0
-            .imgWrap
-              img
+            &.active
+              position relative
+              color #ab2b2b
+              &::before
+                width 3px
+                content ""
+                height 50%
+                display inline-block
+                background-color #ab2b2b
+                position absolute
+                top 50%
+                transform translateY(-50%)
+                left -19px
+            &:nth-child(1)
+              margin-top -10px
+
+      .particularsWrap
+        width 100%
+        height 100%
+        .particulars
+          width 100%
+          box-sizing border-box
+          padding-left 10px
+          .banner
+            img
+              width 100%
+          .list
+            width 100%
+            display flex
+            flex-wrap wrap
+            margin-top 10px
+            .item
+              margin-right 17px
+              box-sizing border-box
+              font-size 12px
+              &:nth-child(3n)
+                margin-right  0
+              .imgWrap
+                img
+                  width 72px
+                  margin 0 auto
+              .imgName
                 width 72px
-                margin 0 auto
-            .imgName
-              width 72px
-              text-align center
+                text-align center
 </style>
