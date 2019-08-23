@@ -2,31 +2,26 @@
   <div class="searchContainer">
     <header class="searchHeader">
       <div class="searchInput" v-if="InitSearch.defaultKeyword">
-        <input type="text" :placeholder="InitSearch.defaultKeyword.keyword" @keyup="">
+        <input type="text" :placeholder="InitSearch.defaultKeyword.keyword" @keyup="getInput" v-model="keywordPrefix">
         <i class="iconfont icon-Search"></i>
       </div>
       <div class="searchRight" @click="$router.back()">
         取消
       </div>
     </header>
-    <div class="searchContent" v-show="false">
+    <div class="searchContent" v-show="!keywordPrefix">
       <h4>热门搜索</h4>
       <div class="searchNavList">
         <div class="searchNavItem" :class="{highlight:hotItem.highlight}" v-for="(hotItem, index) in InitSearch.hotKeywordVOList" :key="index">{{hotItem.keyword}}</div>
        
       </div>
     </div>
-    <div class="searching">
+    <div class="searching" v-if="keywordPrefix">
         <ul class="searchingList">
-          <li class="searchingItem">
-            123
+          <li class="searchingItem" v-for="(SearchResultItem, index) in SearchResult" :key="index">
+            {{SearchResultItem}}
           </li>
-          <li class="searchingItem">
-            123
-          </li>
-          <li class="searchingItem">
-            123
-          </li>
+         
         </ul>
     </div>
   </div>
@@ -37,7 +32,7 @@
   export default {
     data() {
       return {
-        
+        keywordPrefix:''
       }
     },
     computed: {
@@ -45,12 +40,20 @@
         InitSearch:state=>state.search.InitSearch,
         SearchResult:state=>state.search.SearchResult
       })
-      
-
+    },
+    methods: {
+      async getInput(){
+        const {keywordPrefix}=this
+        if(keywordPrefix){
+          await this.$store.dispatch('getSearchResult',{keywordPrefix})
+        }
+        
+      }
     },
      mounted() {
+       
        this.$store.dispatch('getInitSearch')
-       this.$store.dispatch('reqSearchResult',{keywordPrefix})
+       
     },
   }
 </script>
@@ -58,6 +61,7 @@
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .searchContainer
   background-color white
+  
   .searchHeader
     display flex
     padding 10px 10px

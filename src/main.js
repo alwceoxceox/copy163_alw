@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './vuex/store'
+import './validate'
 import 'lib-flexible/flexible'
 import "./mock/mock-server"
 

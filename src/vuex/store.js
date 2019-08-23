@@ -7,6 +7,7 @@ import Vuex, {Store} from 'vuex'
 import home from './modules/home'
 import search from './modules/search'
 import classify from './modules/classify'
+import photograph from './modules/photograph'
 
 import mutations from './mutations'
 import actions from './actions'
@@ -24,7 +25,8 @@ export default new Store({
   modules: {
     home:home,
     search:search,
-    classify:classify
+    classify:classify,
+    photograph
    
   }
 })

@@ -1,6 +1,13 @@
 <template>
   <div>
-    <Header/>
+    <Header>
+      <span slot="left">
+        购物车
+      </span>
+      <span slot="right" class="coupon" @click="$router.push('/login')">
+        领券
+      </span>
+    </Header>
     
     <div class="ShoppingCartNav">
       <ul class="navList">

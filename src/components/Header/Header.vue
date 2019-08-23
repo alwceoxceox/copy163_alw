@@ -1,11 +1,15 @@
 <template>
     <header id="header">
-      <div class="headerLeft">
-        购物车
-      </div>
-      <div class="headerRight">
-        领券
-      </div>
+      <slot name="left">
+        
+      </slot>
+      <slot name="middle">
+        
+      </slot>
+      <slot name="right">
+      
+      </slot>
+      
     </header>
 </template>
 
@@ -21,15 +25,28 @@
   padding 0 15px
   height 44px
   line-height 44px
-
-  .headerLeft
-    float left
-    font-size 18px
+  font-size 18px
+  display flex
+  justify-content: space-between;
+  i
+    font-size 25px
+  .headerDiscover
+    
+    font-size 14px
+    .on
+      color #b4282d
+      font-weight bold
+      font-size 20px
+    &>span
+      margin-left 5px
+  .headerSearch
     color #333
-  .headerRight
-    float right
-    font-size 15px
+    .icon-Search
+      padding-right 5px
+  .coupon
+    font-size 14px
     color #B4282D
-    padding-right 16px
-
+  .loginLogo
+   font-size 18px
+   padding-left 10px
 </style>

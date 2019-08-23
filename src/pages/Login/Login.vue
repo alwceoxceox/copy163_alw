@@ -1,18 +1,30 @@
 <template>
-  <div>
-    <Header></Header>
-    <div class="loginContent" v-show="false">
+  <div class="loginContainer">
+    <Header>
+      <span class="headerHome" slot="left">
+        <i class="iconfont icon-home" @click="$router.push('/home')"></i>
+      </span>
+      <span class="loginLogo" slot="middle" @click="$router.push('/home')">
+        网易严选
+      </span>
+      <span class="headerSearch"  slot="right">
+        <i class="iconfont icon-Search" @click="$router.push('/search')"></i>
+        <i class="iconfont icon-gouwuche" @click="$router.push('/shoppingCart')"></i>
+      </span>
+    
+    </Header>
+    <div class="loginContent" v-if="isShow===1">
       <div class="loginLogo">
         <img src="//yanxuan.nosdn.127.net/bd139d2c42205f749cd4ab78fa3d6c60.png" alt="">
       </div>
       <div class="loginBtn">
-        <div class="loginMobile">
+        <div class="loginMobile" @click.stop="isShow=2">
           <i class="iconfont icon-shouji"></i>
           <span>手机号快捷登录</span>
         </div>
-        <div class="loginEmail">
+        <div class="loginEmail" @click.stop="isShow=3">
           <i class="iconfont icon-youxiang"></i>
-          <span>手机号快捷登录</span>
+          <span>邮箱帐号登录</span>
         </div>
       </div>
       <div class="thirdWrap">
@@ -21,33 +33,37 @@
           <span>微信</span>
         </div>
         <div class="thirdItem">
-          <i class="iconfont icon-weixin"></i>
-          <span>微信</span>
+          <i class="iconfont icon-qq"></i>
+          <span>qq</span>
         </div>
         <div class="thirdItem">
-          <i class="iconfont icon-weixin"></i>
-          <span>微信</span>
+          <i class="iconfont icon-weibo"></i>
+          <span>微博</span>
         </div>
       </div>
     </div>
-    <div class="phoneLogin"  v-show="false">
+    <div class="phoneLogin"  v-else-if="isShow===2">
       <div class="phoneLoginLogo">
         <img src="//yanxuan.nosdn.127.net/bd139d2c42205f749cd4ab78fa3d6c60.png" alt="">
       </div>
       <form action="##" >
         <div class="phoneLoginFormWrap">
-          <input type="text" placeholder="请输入手机号">
+          <input type="text" placeholder="请输入手机号" name="phone" v-model="phone" v-validate="'required|mobile'">
+          <span style="color: red;" v-show="errors.has('phone')">{{ errors.first('phone') }}</span>
           <div class="emailVerify">
-            <input type="text" placeholder="请输入短信验证码">
-            <div >获取验证码</div>
+            <input type="text" placeholder="请输入短信验证码" v-model="code" name="code" v-validate="{required: true, regex: /^\d{6}$/}">
+            <button @click.prevent="sendCode" :disabled="!isRightPhone || computeTime>0">
+              {{computeTime>0 ? `短信已发送${computeTime}s` : "获取验证码"}}
+            </button>
+            <span style="color: red;" v-show="errors.has('code')">{{ errors.first('code') }}</span>
           </div>
           <div class="issue">
             <span>遇到问题？</span>
-            <span>使用密码验证登录</span>
+            <span @click="isShow=3">使用密码验证登录</span>
           </div>
-          <button class="btn">登录</button>
+          <button class="btn" @click.prevent="loginBtn">登录</button>
           <div class="clause">
-            <h5>
+            <h5 @click="">
               <input type="checkbox" checked>
             </h5>
             <div class="contract">
@@ -60,31 +76,32 @@
         </div>
       </form>
       <div class="otherLogin">
-        <span>其他登录方式</span>
+        <span @click="isShow=1">其他登录方式</span>
         <i class="iconfont icon-jiantou"></i>
       </div>
     </div>
-    <div class="emailLogin" >
+    <div class="emailLogin" v-else>
       <div class="emailLoginLogo">
         <img src="//yanxuan.nosdn.127.net/bd139d2c42205f749cd4ab78fa3d6c60.png" alt="">
       </div>
       <form action="##" >
         <div class="emailLoginLogoFormWrap">
-          <input type="text" placeholder="邮箱账号">
+          <input type="text" placeholder="邮箱账号" name="邮箱" v-model="email" v-validate="'required'">
+          <span style="color: red;">{{errors.first('邮箱')}}</span>
           <div class="emailVerify">
-            <input type="password" placeholder="密码">
-
+            <input type="password" placeholder="密码" name="密码" v-model="password" v-validate="'required'">
+            <span style="color: red;">{{errors.first('密码')}}</span>
           </div>
           <div class="issue">
             <span>注册账号</span>
             <span>忘记密码</span>
           </div>
-          <button class="btn">登录</button>
+          <button class="btn" @click.prevent="loginBtn">登录</button>
 
         </div>
       </form>
       <div class="otherLogin">
-        <span>其他登录方式</span>
+        <span @click="isShow=1">其他登录方式</span>
         <i class="iconfont icon-jiantou"></i>
       </div>
     </div>
@@ -92,11 +109,60 @@
 </template>
 
 <script type="text/ecmascript-6">
+import {Toast,MessageBox} from 'mint-ui'
   export default {
+    data() {
+      return {
+        isShow:1,//1登录主页2手机登录3邮箱
+        phone:'',//手机号
+        code:'',//验证码验证
+        email:'',//邮箱
+        password:'',
+        computeTime:0,//计时
+        // isRightPhone:false
+      }
+    },
+    computed: {
+      isRightPhone(){
+        // 手机验证
+        return /^1[3456789]\d{9}$/.test(this.phone)
+      }
+    },
+    methods: {
+      sendCode(){
+        /* 
+        发送验证
+        */
+        // 设置最大时间
+        this.computeTime=10
+        // 启动循环定时器进行计时
+        const timer=setInterval(()=>{
+          this.computeTime--
+          //一但computeTime=0清除定时器
+          if(this.computeTime===0){
+            clearInterval(timer)
+          }
+        },1000)
+      },
+      async loginBtn(){
+        const {isShow, phone, code, email, password}=this
+        let names
+        if(isShow===2){//短信登录
+          names=['phone','code']
+        }else{
+          names=['邮箱','密码']
+        }
+        const success = await this.$validator.validateAll(names)
+         if(success) {
+          Toast('表单验证通过, 发送登陆请求')
+        }
+      },
+    }
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
+
   .loginContent
     .loginLogo
       margin 90px 0 100px
@@ -135,7 +201,7 @@
   .phoneLogin
     background-color white
     width 100%
-    height 600px
+    height 800px
     .phoneLoginLogo
       padding  20px 0
       img
@@ -152,7 +218,7 @@
         font-size 14px
       .emailVerify
         position relative
-        &>div
+        &>button
           border 1px solid #666
           position absolute
           right: 25px
@@ -212,7 +278,7 @@
   .emailLogin
     background-color white
     width 100%
-    height 600px
+    height 800px
     .emailLoginLogo
       padding  20px 0
       img
@@ -269,6 +335,7 @@
           width 18px
           height 18px
           color #999
+          
           &>input
             width 100%
             height 100%

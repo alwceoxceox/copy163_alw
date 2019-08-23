@@ -1,51 +1,63 @@
 <template>
   <div>
     <div class="PhotographHeader">
-      <Header></Header>
-      <div class="PhotographNav">
+      <Header>
+        <span class="headerHome" slot="left">
+           <i class="iconfont icon-home" @click="$router.push('/home')"></i>
+        </span>
+        <span  class="headerDiscover" slot="middle">
+          <span @click="isOn=!isOn" :class="{on:!isOn}" >发现</span>
+          <span @click="isOn=!isOn" :class="{on:isOn}">甄选家</span>
+        </span>
+         <span class="headerSearch"  slot="right">
+            <i class="iconfont icon-Search" @click="$router.push('/search')"></i>
+            <i class="iconfont icon-gouwuche" @click="$router.push('/shoppingCart')"></i>
+        </span>
+      </Header>
+      <div class="PhotographNav" ref="PhotographNav">
         <div class="PhotographNavList">
-          <a class="PhotographNavItem">盛夏特别版</a>
-          <a class="PhotographNavItem on">推荐</a>
-          <a class="PhotographNavItem">盛夏特别版</a>
-          <a class="PhotographNavItem">盛夏特别版</a>
-          <a class="PhotographNavItem">盛夏特别版</a>
-          <a class="PhotographNavItem">盛夏特别版</a>
+          <a class="PhotographNavItem" :class="{on:index===currteIndex}" @click.stop="getOn(index)" v-for="(tab, index) in tabsData" :key="index" >
+            {{tab.tabName}}
+          </a>
         </div>
       </div>
     </div>
-    <div class="PhotographCommentWrap">
-      <div class="PhotographComment1">
-        <img src="https://yanxuan.nosdn.127.net/4d3325dca3fd3955cb3f71049bcb06cf.jpg?imageView&quality=65&thumbnail=690y376" alt="">
+    <div class="headerClapboard" v-if="recommendData"></div> 
+    <div class="PhotographCommentWrap" v-for="(recommendDataItems, index) in recommendData" :key="index">
+      <div class="PhotographComment1" v-if="recommendDataItems.ad">
+        <img :src="recommendDataItems.ad.picUrl" alt="">
       </div>
-      <div class="PhotographComment2">
-        <div class="PhotographComment2User">
-          <img src="https://yanxuan.nosdn.127.net/345ad0e4fdfdd16e1ad9baee2dd26c5f.png?imageView&quality=65&thumbnail=56y56" alt="">
-          <span class="PhotographComment2UserName">选妹</span>
-        </div>
-        <div class="PhotographComment2Title">
-          每天在用的纸巾，你会留意原料吗？原生木浆纸巾更安全~
-        </div>
-        <img src="https://yanxuan.nosdn.127.net/4d3325dca3fd3955cb3f71049bcb06cf.jpg?imageView&quality=65&thumbnail=690y376" alt="">
-        <div class="PhotographComment2Rcount">
-          <i class="iconfont icon-yj"></i>
-          <span>88k人看过</span>
-        </div>
-      </div>
-      <div class="PhotographComment3">
-        <div class="PhotographComment3Info">
-          <div class="PhotographComment3InfoUser">
-            <img src="https://yanxuan.nosdn.127.net/345ad0e4fdfdd16e1ad9baee2dd26c5f.png?imageView&quality=65&thumbnail=56y56" alt="">
-            <span class="PhotographComment2UserName">网易有道：莉莉</span>
+      <div v-for="(recommendDataItem, index) in recommendDataItems.topics"  :key="index">
+        <div class="PhotographComment2" v-if="recommendDataItem.type===0" >
+          <div class="PhotographComment2User">
+            <img :src="recommendDataItem.avatar" alt="">
+            <span class="PhotographComment2UserName">{{recommendDataItem.nickname}}</span>
           </div>
-          <div class="PhotographComment3Title">我可以擦厨房，但从不洗抹布</div>
-          <div class="PhotographComment3Title2">本色抑菌懒人抹布</div>
-          <div class="PhotographComment3InfoRcount">
+          <div class="PhotographComment2Title">
+            {{recommendDataItem.title}}
+          </div>
+          <img :src="recommendDataItem.picUrl" alt="">
+          <div class="PhotographComment2Rcount">
             <i class="iconfont icon-yj"></i>
-            <span>88k人看过</span>
+            <span>{{recommendDataItem.readCount>9999 ? Math.floor(recommendDataItem.readCount/100)/10+'k' : recommendDataItem.readCount}}人看过</span>
           </div>
         </div>
-        <div class="PhotographComment3Img">
-          <img src="https://yanxuan.nosdn.127.net/dfb45f7fb44232989b7094e8be4a8dd3.jpg?imageView&quality=65&thumbnail=272y272" alt="">
+        <div class="PhotographComment3" v-else-if="recommendDataItem.type===2">
+          <div class="PhotographComment3Info">
+            <div class="PhotographComment3InfoUser">
+              <img :src="recommendDataItem.avatar" alt="">
+              <span class="PhotographComment2UserName">{{recommendDataItem.nickname}}</span>
+            </div>
+            <div class="PhotographComment3Title">{{recommendDataItem.title}}</div>
+            <div class="PhotographComment3Title2">{{recommendDataItem.subTitle}}</div>
+            <div class="PhotographComment3InfoRcount">
+              <i class="iconfont icon-yj"></i>
+              <span>{{recommendDataItem.readCount>9999 ? Math.floor(recommendDataItem.readCount/1000)+recommendDataItem.readCount+'k' : recommendDataItem.readCount}}人看过</span>
+            </div>
+          </div>
+          <div class="PhotographComment3Img">
+            <img :src="recommendDataItem.picUrl" alt="">
+          </div>
         </div>
       </div>
     </div>
@@ -54,12 +66,21 @@
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll'
+  import {mapState} from 'vuex'
   export default {
+    data() {
+      return {
+        currteIndex:0,
+        isOn:false
+      }
+    },
     mounted() {
-      let PhotographNav = document.querySelector('.PhotographNav')
-      let bs = new BScroll('.PhotographNav', {
+      this.$store.dispatch('getTabs')
+      this.$store.dispatch('getRecommend')
+      let bs = new BScroll(this.$refs.PhotographNav, {
         pullUpLoad: true,
         scrollX:true,
+        click:true,
         bounce:{
           top: false,
           bottom: false,
@@ -67,26 +88,46 @@
           right: false
         }
       })
+
     },
+   
+    methods: {
+      getOn(index){
+        this.currteIndex=index
+      }
+    },
+    computed: {
+      ...mapState({
+        tabsData:state=>state.photograph.tabsData,
+        recommendData:state=>state.photograph.recommendData
+      }),
+
+    },
+   
+    
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
+.headerClapboard
+  height 90px
+ 
 .PhotographHeader
   position fixed
   top 0
   width 100%
   .PhotographNav
     width 100%
-    overflow hidden
+    display flex
     border-top 1px solid #eee
     border-bottom 1px solid #eee
     .PhotographNavList
-      width 200%
+      display flex
       background-color #fff
       .PhotographNavItem
         font-size 14px
         height 35px
+        white-space: nowrap;
         line-height 35px
         margin 0 5px
         padding 0 3px 5px
@@ -94,6 +135,8 @@
           border-bottom 3px solid #B4282D
           color #B4282D
 .PhotographCommentWrap
+  padding-top 90px
+  margin-top -90px
   .PhotographComment1
     width 100%
     background-color white
@@ -106,7 +149,7 @@
     width 100%
     background-color white
     padding 10px 0
-    margin 10px 0
+    margin 10px 0 0
     img
       width 93%
       margin 0px auto
@@ -135,6 +178,8 @@
     background-color white
     width 100%
     padding 10px 4%
+    margin 10px 0 0
+
     display flex
     box-sizing border-box
     .PhotographComment3Info

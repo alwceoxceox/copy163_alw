@@ -16,7 +16,7 @@
          
         </div>
         <!-- 如果需要分页器 -->
-        <div class="swiper-pagination"></div>
+        <div class="swiper-pagination" ref="swiperPagination"></div>
       </div>
 
      
@@ -75,8 +75,8 @@
             
             // 如果需要分页器
             pagination: {
-              el: '.swiper-pagination',
-              clickable: true,
+              el: this.$refs.swiperPagination,
+              // clickable: true,
             },
           }) 
         })

@@ -4,6 +4,7 @@ import ajax from './ajax'
 // const prefix = 'http://m.you.163.com'    // npm run build
 //使用代理
 const prefix = '/api'
+const prefix2 = '/login'
 
 // 首页数据
 export const reqMockHome = () => ajax('/mock/home');    // 请求mock数据
@@ -36,3 +37,18 @@ export const reqList = (page, size, type) => ajax(`${prefix}/topic/v1/look/getLi
 
 // 其它组件 数据 ---- http://m.you.163.com/topic/v1/find/getTabData.json
 export const reqTabData = (page, size, tabId) => ajax(`${prefix}/topic/v1/find/getTabData.json`, {page, size, tabId})
+
+
+// 登录相关
+
+/* 发送短信验证码*/
+export const reqSendCode = (phone) => ajax.get(prefix2 + '/sendcode', {params: {phone} })
+
+/* 用户名密码登陆 */
+export const reqPwdLogin = ({ name,  pwd}) => ajax.post(prefix2 + '/login_pwd', { name, pwd})
+
+/* 手机号短信验证码登陆 */
+export const reqSmsLogin = (phone, code) => ajax.post(prefix2 + '/login_sms', {phone,code})
+
+/* 自动登陆*/
+export const reqAutoLogin = () => ajax({url: prefix2 + '/auto_login', headers: {needToken: true} })
